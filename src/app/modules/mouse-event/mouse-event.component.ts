@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { fromEvent, of } from 'rxjs';
-import { takeUntil, map, mergeMap } from 'rxjs/operators';
+import { takeUntil, map, mergeMap, filter } from 'rxjs/operators';
 
 @Component({
   selector: 'app-mouse-event',
@@ -9,7 +9,7 @@ import { takeUntil, map, mergeMap } from 'rxjs/operators';
 })
 export class MouseEventComponent implements OnInit {
   constructor() { }
-
+  stylObj: object = {};
   ngOnInit() {
     this.mouseMove()
   }
@@ -18,27 +18,17 @@ export class MouseEventComponent implements OnInit {
 
   /** Method to make movable element */
   private mouseMove(): void {
-    const mousePointer = document.getElementById("mousePointer");
-    const mousedown$ = fromEvent<MouseEvent>(mousePointer, 'mousedown');
-    const mousemove$ = fromEvent<MouseEvent>(document, 'mousemove');
-    const mouseup$ = fromEvent<MouseEvent>(mousePointer, 'mouseup');
-
-    const drag$ = mousedown$.pipe(
-      mergeMap(
-        (start) => {
-          return mousemove$.pipe(map(move => {
-            move.preventDefault();
-            return {
-              left: move.clientX - start.offsetX,
-              top: move.clientY - start.offsetY
-            }
-          }),
-            takeUntil(mouseup$));
+    const mousemove$ = fromEvent<MouseEvent>(document, 'mousemove')
+      .pipe(
+        map((move: MouseEvent) => {
+          return {
+            left: move.clientX,
+            top: move.clientY
+          }
         }));
 
-    drag$.subscribe(pos => {
-      mousePointer.style.top = `${pos.top}px`
-      mousePointer.style.left = `${pos.left}px`
+    mousemove$.subscribe(pos => {
+      this.stylObj = { 'top': `${pos.top}px`, 'left': `${pos.left}px` };
     });
 
   }

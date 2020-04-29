@@ -3,10 +3,12 @@ import { NgModule } from '@angular/core';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
+import { MouseEventComponent } from './modules/mouse-event/mouse-event.component';
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    MouseEventComponent
   ],
   imports: [
     BrowserModule,
